@@ -1,59 +1,35 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.Buffer;
 
 public class Main {
-    static int N;
-    static int[][] arr;
-    static int countMinus=0;
-    static int countZero=0;
-    static int countOne=0;
+    public static StringBuilder sb = new StringBuilder();
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
-        arr = new int[N][N];
+        int N = Integer.parseInt(br.readLine());
 
-        for(int i=0; i<N; i++) {
-            String[] st = br.readLine().split(" ");
-            for(int j=0; j<N; j++) {
-                arr[i][j] = Integer.parseInt(st[j]);
-            }
-        }
+        // 하노이 실행 횟수 : 2^N-1
+        sb.append((int)(Math.pow(2, N)-1)+"\n");
 
-        checkCount(0, 0, N);
+        hanoi(N, 1, 2, 3);
+        System.out.println(sb);
 
-        System.out.println(countMinus);
-        System.out.println(countZero);
-        System.out.println(countOne);
-    }
-    // 같은 숫자를 가진 종이가 있는지 검사하는 함수
-    // -> 있으면 true 반환, 아니면 false 반환
-    public static boolean checkPaper(int row, int col, int size) {
-        for(int i=row; i<row+size; i++) {
-            for(int j=col; j<col+size; j++) {
-                if(arr[row][col] != arr[i][j])  // 최상단좌측값과 다르면 false
-                    return false;
-            }
-        }
-        return true;
     }
 
-    // 각 숫자에 대한 카운트를 해주는 함수
-    public static void checkCount(int row, int col, int size) {
-        if(checkPaper(row, col, size)) {
-            int temp = arr[row][col];
-            if(temp == -1) countMinus++;
-            else if(temp == 0) countZero++;
-            else if(temp == 1) countOne++;
-            return;  // ruturn의 중요성! -> if문을 종료시키고 자신을 호출한 곳으로 다시 되돌아간다.
+    public static void hanoi(int n, int A, int B, int C) {
+        //원반의 수가 1개일 때의 처리
+        if(n == 1) {
+            sb.append(A + " " + C + "\n");
+            return;
         }
+        // 1개를 A에서 C로 이동시킴.
+        hanoi(n-1, A, C, B);
+        sb.append(A + " " + C + "\n");
 
-        int newSize = size / 3;
-        for(int i=row; i<row+size; i+=newSize) {
-            for(int j=col; j<col+size; j+=newSize) {
-                checkCount(i, j, newSize);
-            }
-        }
+        // n-1개를 B에서 C로 이동시킴.
+        hanoi(n-1, B, A, C);
+        // N == 1일때 sb에 입력되기 때문에 여기서 입력할 필요 없다.
+        //sb.append(B + " " + C + "\n");
     }
-
 }
